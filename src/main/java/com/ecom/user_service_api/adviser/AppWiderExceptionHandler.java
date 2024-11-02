@@ -1,5 +1,6 @@
 package com.ecom.user_service_api.adviser;
 
+import com.ecom.user_service_api.exception.DuplicateEntryException;
 import com.ecom.user_service_api.exception.EntryNotFoundException;
 import com.ecom.user_service_api.util.StandardResponse;
 import org.springframework.http.HttpStatus;
@@ -16,4 +17,13 @@ public class AppWiderExceptionHandler {
                 HttpStatus.NOT_FOUND
         );
     }
+
+    @ExceptionHandler(DuplicateEntryException.class)
+    public ResponseEntity<StandardResponse> handleDuplicateEntryException(DuplicateEntryException duplicateEntryException){
+        return new ResponseEntity<>(
+                new StandardResponse(409,duplicateEntryException, duplicateEntryException.getMessage()),
+                HttpStatus.CONFLICT
+        );
+    }
+
 }
