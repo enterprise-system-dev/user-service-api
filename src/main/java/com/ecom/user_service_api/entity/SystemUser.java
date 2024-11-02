@@ -24,5 +24,4 @@ public class SystemUser {
 
     @Column(name = "last_name", length = 45, nullable = false)
     private String lastName;
-
 }
