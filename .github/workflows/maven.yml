@@ -29,4 +29,4 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Execute Jar File
-      run: sudo kill -9 `sudo lsof -t -i:8083` & sudo java -jar /root/eadp/user-service/actions-runner/_work/eureka-server/eureka-server/target/eureka-server-0.0.1-SNAPSHOT.jar &
+      run: sudo kill -9 `sudo lsof -t -i:8083` & sudo java -jar /root/eadp/user-service/actions-runner/_work/user-service-api/user-service-api/target/user-service-api-0.0.1-SNAPSHOT.jar &
