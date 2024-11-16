@@ -10,6 +10,6 @@ import lombok.*;
 public class RequestUserDto {
     private String email;
     private String password;
-    private String fName;
-    private String lName;
+    private String firstName;
+    private String lastName;
 }

@@ -17,22 +17,24 @@ import java.util.Map;
 
 @Component
 public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+
     @Override
-    public AbstractAuthenticationToken convert(Jwt source) {
-        Collection<GrantedAuthority> grantedAuthorities = extractGrantedAuthorities(source);
-        return new JwtAuthenticationToken(source,grantedAuthorities);
+    public AbstractAuthenticationToken convert(Jwt jwt) {
+        Collection<GrantedAuthority> roles = extractAuthorities(jwt);
+        return new JwtAuthenticationToken(jwt, roles);
     }
-    private Collection<GrantedAuthority> extractGrantedAuthorities(Jwt jwt){
-        if(jwt.getClaim("realm_access")!=null){
+
+    private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
+        if(jwt.getClaim("realm_access") != null) {
             Map<String, Object> realmAccess = jwt.getClaim("realm_access");
             ObjectMapper mapper = new ObjectMapper();
-            List<String> keyCloakRoles = mapper.convertValue(realmAccess.get("roles"),
-                    new TypeReference<List<String>>() {
-                    });
+            List<String> keycloakRoles = mapper.convertValue(realmAccess.get("roles"), new TypeReference<List<String>>(){});
             List<GrantedAuthority> roles = new ArrayList<>();
-            for(String r:keyCloakRoles){
-                roles.add(new SimpleGrantedAuthority(r));
+
+            for (String keycloakRole : keycloakRoles) {
+                roles.add(new SimpleGrantedAuthority(keycloakRole));
             }
+
             return roles;
         }
         return new ArrayList<>();

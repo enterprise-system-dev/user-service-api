@@ -21,32 +21,36 @@ public class SecurityConfiguration {
     private JwtAuthConverter jwtAuthConvertor;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        security.csrf(AbstractHttpConfigurer::disable);
-
-        security.authorizeHttpRequests(authorize->{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable);
+       /* http.cors(httpSecurityCorsConfigurer ->
+                httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()));*/
+        http.authorizeHttpRequests(authorize -> {
             authorize
-                    .requestMatchers(HttpMethod.POST,"user-service/api/v1/users/signup/**").permitAll()
-                    .requestMatchers(HttpMethod.POST,"user-service/api/v1/users/login/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "user-service/api/v1/users/signup").permitAll()
+                    .requestMatchers(HttpMethod.POST, "user-service/api/v1/users/login").permitAll()
+
                     .anyRequest().authenticated();
         });
 
-
-        security.oauth2ResourceServer(t->{
-            t.jwt(jwtConfig->jwtConfig.jwtAuthenticationConverter(jwtAuthConvertor));
-//         t.jwt((Customizer.withDefault));
+        http.oauth2ResourceServer(t -> {
+            t.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthConvertor));
+            /*  t.jwt((Customizer.withDefaults()));*/
         });
-
-        security.sessionManagement(t->t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        return security.build();
+        http.sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
     }
-    @Bean
-    public DefaultMethodSecurityExpressionHandler methodSecurity(){
-        DefaultMethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler =
-                new DefaultMethodSecurityExpressionHandler();
-        defaultMethodSecurityExpressionHandler.setDefaultRolePrefix("");
 
+    @Bean
+    public DefaultMethodSecurityExpressionHandler msecurity() {
+        DefaultMethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler = new DefaultMethodSecurityExpressionHandler();
+        defaultMethodSecurityExpressionHandler.setDefaultRolePrefix("");
         return defaultMethodSecurityExpressionHandler;
     }
+
+   /* @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withIssuerLocation(issuerUri).build();
+    }*/
+
 }

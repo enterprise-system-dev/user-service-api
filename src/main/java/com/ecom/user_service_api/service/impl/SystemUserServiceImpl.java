@@ -51,7 +51,6 @@ public class SystemUserServiceImpl implements SystemUserService {
 
     @Override
     public void signup(RequestUserDto dto) {
-
         String userId = "";
         Keycloak keycloak = null;
 
@@ -78,7 +77,7 @@ public class SystemUserServiceImpl implements SystemUserService {
                     .realmLevel().add(Arrays.asList(roleRepresentation));
 
             SystemUser su = new SystemUser(
-                    userId, dto.getEmail(), dto.getFName(), dto.getLName()
+                    userId, dto.getEmail(), dto.getFirstName(), dto.getLastName()
             );
             systemUserRepo.save(su);
         }
@@ -88,8 +87,9 @@ public class SystemUserServiceImpl implements SystemUserService {
     private UserRepresentation convertUser(RequestUserDto dto) {
         UserRepresentation userR = new UserRepresentation();
         userR.setUsername(dto.getEmail());
-        userR.setFirstName(dto.getFName());
-        userR.setLastName(dto.getLName());
+        userR.setFirstName(dto.getFirstName());
+        userR.setEmail(dto.getEmail());
+        userR.setLastName(dto.getLastName());
         userR.setEnabled(true);
         userR.setEmailVerified(true);
         List<CredentialRepresentation> cre = new ArrayList<>();
@@ -123,7 +123,7 @@ public class SystemUserServiceImpl implements SystemUserService {
                     restTemplate.postForEntity(apiUrl, requestBody, Object.class);
             return response.getBody();
         }catch (Exception e){
-            throw new InternalServerErrorException("Something went wrong..");
+            throw new InternalServerErrorException(e);
         }
     }
 }
